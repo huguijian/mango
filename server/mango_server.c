@@ -1,168 +1,7 @@
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <sys/select.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/epoll.h>
-#include <fcntl.h>
-#include <string.h>
-#include <netinet/tcp.h>
-
-#include "pool_connect.c"
-
-typedef int BOOL;
-#ifndef FALSE
-#define	FALSE						(0)
-#endif
-#ifndef	TRUE
-#define	TRUE						(!FALSE)
-#endif
-
-#define BUFFLEN 1024
-#define SERVER_PORT 8899
-#define BACKLOG 5
-#define CLIENTNUM 1024
-
-#define EPOLLEVENTS 20;
-#define FDSIZE 1000;
-#define MAXSIZE 1024;
-
-int connect_host[CLIENTNUM];
-int connect_number = 0;
-static int epoll_fd = -1;
-static int current_connected_total = 0;
-
-pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-struct dataPacket{
-    unsigned int msgLen;
-    char data[1024];
-};
-
-typedef struct _task_func_paramter{
-    int fd;
-    char *recv_buffer;
-}task_func_paramter;
-
-typedef struct _task_queue{
-
-    void *(*task_func)(task_func_paramter *arg);
-    task_func_paramter *func_paramter;
-    struct _task_queue *prev;
-    struct _task_queue *next;
-}task_queue;
-
-typedef struct _tpool{
-    pthread_mutex_t queue_lock;
-    pthread_cond_t  queue_ready;
-
-    pthread_t *threads;
-    int        thread_num;
-    task_queue *first_task;
-    int task_queue_num;
-
-}tpool;
-
-typedef struct _tpool_thread_paramter{
-    tpool *tpool_t;
-    int   thread_index;
-}tpool_thread_paramter;
-
-
-static void close_socket(int fd);
-
-static int set_socket_non_block(int fd);
-
-ssize_t send_other(int fd, void *buf, size_t count)
-{
-        int left = count ;
-        char * ptr = (char *)buf;
-        while(left >0)
-        {
-                int writeBytes = send(fd,ptr,left,0);
-                if(writeBytes<0)
-                {
-                        if(errno == EINTR)
-                                continue;
-                        return -1;
-                }
-                else if(writeBytes == 0)
-                        continue;
-                left -= writeBytes;
-                ptr  += writeBytes;
-        }
-        return left;
-}
-
-ssize_t recv_other(int fd,void *buf,size_t count)
-{
-    int left = count ; //剩下的字节
-    char *ptr = (char*)buf ;
-    while(left>0)
-    {
-            int readBytes = recv(fd,ptr,left,0);
-
-            if(readBytes< 0)//read函数小于0有两种情况：1中断 2出错
-            {
-                    if(errno == EINTR)//读被中断
-                    {
-                            continue;
-                    }
-
-                    return -1;
-            }
-            if(readBytes == 0)//读到了EOF
-            {
-
-                return count-left;
-            }
-            left -= readBytes;
-            ptr  += readBytes;
-    }
-
-    return left;
-}
-
-
-static int connect_total(BOOL is_true,int value)
-{
-    pthread_mutex_lock(&connect_total_mutex);
-    if(is_true){
-        current_connected_total = current_connected_total+value;
-    }else{
-        current_connected_total = current_connected_total-value;
-    }
-    pthread_mutex_unlock(&connect_total_mutex);
-}
-
-static void close_socket(int fd)
-{
-    shutdown(fd,SHUT_RDWR);
-}
-
-static int set_socket_non_block(int fd)
-{
-    int opts = -1;
-    opts = fcntl(fd,F_GETFL);
-    if(opts < 0){
-        printf("fcntl(fd=%d,GETFL) error.\n",fd);
-        return -1;
-    }
-    opts = opts | O_NONBLOCK;
-    if(fcntl(fd,F_SETFL,opts)<0) {
-        printf("fcntl(fd=%d,GETFL).\n error",fd);
-        return -1;
-    }
-    return 0;
-}
+#include "mango_global.h"
+#include "mango_connect.h"
+#include "mango_server.h"
+#include "mango_socket.h"
 
 void *thread_handle(tpool_thread_paramter *arg)
 {
@@ -224,7 +63,7 @@ static void *tpool_task_function(task_func_paramter *arg)
 
   printf("current connected fd=%d\n",arg->fd);
   printf("current recv data :%s\n",arg->recv_buffer);
-  send_other(arg->fd,arg->recv_buffer,3);
+  socket_send(arg->fd,arg->recv_buffer,3);
 
   if(arg->fd != -1)
   {
@@ -232,7 +71,7 @@ static void *tpool_task_function(task_func_paramter *arg)
       set_free_connect_by_index(connect_index);
       connect_total(FALSE,1);
       free(arg);
-      close_socket(arg->fd);
+      socket_close(arg->fd);
   }
 
   return 0;
@@ -336,17 +175,17 @@ static void *accept_thread(void *arg)
             printf("Not found free connect.\n");
 
             if(connect_fd != -1) {
-                close_socket(connect_fd);
+                socket_close(connect_fd);
                 connect_fd = -1;
             }
 
             continue;
         }
 
-        if(set_socket_non_block(connect_fd)<0){
+        if(socket_set_non_block(connect_fd)<0){
             printf("set socket nonoblock socket=%d error.\n",connect_fd);
             if(connect_fd != -1){
-                close_socket(connect_fd);
+                socket_close(connect_fd);
                 connect_fd = -1;
             }
             continue;
@@ -357,7 +196,7 @@ static void *accept_thread(void *arg)
         {
             printf("set socket(%d) setsockopt SO_RCVBUF error.\n",connect_fd);
             if(connect_fd != -1){
-                close_socket(connect_fd);
+                socket_close(connect_fd);
                 connect_fd = -1;
             }
             continue;
@@ -370,7 +209,7 @@ static void *accept_thread(void *arg)
         if(epoll_ctl(epoll_fd,EPOLL_CTL_ADD,connect_fd,&ev) == -1){
             printf("EPOLL_CTL_ADD error.\n");
             if(connect_fd != -1){
-                close_socket(connect_fd);
+                socket_close(connect_fd);
                 connect_fd = -1;
             }
         }else{
@@ -378,11 +217,11 @@ static void *accept_thread(void *arg)
         }
 
         connect_total(TRUE,1);
-        printf("Epoll event[%d] Current connected total num %d from ip:%s fd:%d.\n",connect_index,current_connected_total,inet_ntoa(clientaddr.sin_addr),connect_fd);
+        printf("Epoll event[%d] Current connected total num %d from ip:%s fd:%d.\n",connect_index,get_connect_count(),inet_ntoa(clientaddr.sin_addr),connect_fd);
 
     }
     if(listen_fd != -1){
-        close_socket(listen_fd);
+        socket_close(listen_fd);
 
         listen_fd = -1;
     }
@@ -440,7 +279,7 @@ int main(int argc,char *argv[])
                     set_free_connect_by_index(connect_index);
                     if(connected_fd != -1)
                     {
-                        close_socket(connected_fd);
+                        socket_close(connected_fd);
                         connected_fd = -1;
                     }
                     continue;
@@ -452,7 +291,7 @@ int main(int argc,char *argv[])
                 //msg_len = recv_other(connected_fd,&readPacket.msgLen,4);
 
                 //int dataBytes = ntohl(readPacket.msgLen); //字节序的转换
-                int readBytes = recv_other(connected_fd,&readPacket.data,3); //读取出后续的数据
+                int readBytes = socket_recv(connected_fd,&readPacket.data,3); //读取出后续的数据
 
                 if(readBytes==0)
                 {
@@ -469,7 +308,7 @@ int main(int argc,char *argv[])
                     set_free_connect_by_index(connect_index);
                     if(connected_fd != -1)
                     {
-                        close_socket(connected_fd);
+                        socket_close(connected_fd);
                         connected_fd = -1;
                     }
                 }
@@ -486,7 +325,7 @@ int main(int argc,char *argv[])
 
                 set_free_connect_by_index(get_connect_index_by_fd(connected_fd));
                 if(connected_fd != -1){
-                    close_socket(connected_fd);
+                    socket_close(connected_fd);
                     connected_fd = -1;
                 }
             }

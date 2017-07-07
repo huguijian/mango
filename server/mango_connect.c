@@ -1,26 +1,7 @@
-#define MAX_FDS 1024
-#define MAX_CONNECT_NUM MAX_FDS
-#define IP_ADDR_LENGTH 20
-static char log_str_buf[256];
-
-typedef struct _pool_connect{
-    int connect_fd;
-    int socket_status;
-    time_t now;
-    char client_ip_addr[IP_ADDR_LENGTH];
-    pthread_mutex_t mutex;
-}pool_connect;
-
-static pool_connect pool_connect_client[MAX_CONNECT_NUM];
-
-static void lock_event_state(int iConnect,int iLock);
-void init_pool_connect(void);
-void add_connect_to_pool_connect(int iConnect,int fd,char *clientIp);
-pool_connect get_connect_info_by_index(int index);
-int get_free_connect_index(void);
-void set_free_connect_by_index(int index);
-int get_connect_index_by_fd(int connected_fd);
-
+#include "mango_global.h"
+#include "mango_connect.h"
+static int current_connected_total = 0;
+pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;
 static void lock_event_state(int iConnect,int iLock)
 {
     int iRet;
@@ -105,3 +86,21 @@ pool_connect get_connect_info_by_index(int index)
         return pool_connect_client[index];
     }
 }
+
+int connect_total(BOOL is_true,int value)
+{
+    pthread_mutex_lock(&connect_total_mutex);
+    if(is_true){
+        current_connected_total = current_connected_total+value;
+    }else{
+        current_connected_total = current_connected_total-value;
+    }
+    pthread_mutex_unlock(&connect_total_mutex);
+}
+
+int get_connect_count()
+{
+    return current_connected_total;
+}
+
+
