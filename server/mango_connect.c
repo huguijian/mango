@@ -1,7 +1,8 @@
 #include "mango_global.h"
 #include "mango_connect.h"
 static int current_connected_total = 0;
-pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;//静态锁与动态锁多次被定义问题
+int get_connect_count();
 static void lock_event_state(int iConnect,int iLock)
 {
     int iRet;
@@ -87,6 +88,12 @@ pool_connect get_connect_info_by_index(int index)
     }
 }
 
+int get_connect_count()
+{
+
+    return current_connected_total;
+}
+
 int connect_total(BOOL is_true,int value)
 {
     pthread_mutex_lock(&connect_total_mutex);
@@ -98,9 +105,5 @@ int connect_total(BOOL is_true,int value)
     pthread_mutex_unlock(&connect_total_mutex);
 }
 
-int get_connect_count()
-{
-    return current_connected_total;
-}
 
 

@@ -57,9 +57,62 @@ ssize_t socket_recv(int fd,void *buf,size_t count)
     return left;
 }
 
+ssize_t socket_recv_peek(int fd,void *buf,size_t len)
+{
+    while(1)
+    {
+        int ret = recv(fd,buf,len,MSG_PEEK);
+        if(ret==-1 && errno==EINTR)
+            continue;
+        return ret;
+    }
+}
+
+ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)
+{
+    int ret;
+    int nRead = 0;
+    int left = max_size;
+    char *pbuf = (char*) buf;
+    int count  = 0;
+
+    while(1)
+    {
+        ret = socket_recv_peek(fd,pbuf,left);
+        if(ret<=0)
+        {
+            return ret;
+        }
+
+        nRead = ret;
+        for(int i=0;i<nRead;++i)
+        {
+            if(pbuf[i] == '\n')
+            {
+
+                ret = socket_recv(fd,pbuf,i+1);
+
+                if(ret != 0)
+                    printf("Recv data len error .data len is:%d\n",ret);
+                return ret;
+            }
+        }
+
+        ret = socket_recv(fd,pbuf,nRead);
+        if(ret != nRead)
+            exit(EXIT_FAILURE);
+        pbuf += nRead;
+        left -= nRead;
+        count +=nRead;
+    }
+
+    return -1;
+}
+
 void socket_close(int fd)
 {
     shutdown(fd,SHUT_RDWR);
+    close(fd);
 }
 
 int socket_set_non_block(int fd)

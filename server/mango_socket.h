@@ -7,8 +7,10 @@
 #ifndef _MANGO_SOCKET_H
 #define _MANGO_SOCKET_H
 #include <sys/types.h>
+#define DATA_EOF "\n"
 ssize_t socket_send(int fd, void *buf, size_t count);
 ssize_t socket_recv(int fd,void *buf,size_t count);
+ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size);
 void socket_close(int fd);
 int socket_set_non_block(int fd);
 #endif

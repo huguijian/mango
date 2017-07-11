@@ -1,3 +1,7 @@
+# ========================================================================================
+# Makefile for Client test		
+# ========================================================================================
+
 
 # ========================================================================================
 # Set include directories.
@@ -5,23 +9,15 @@ INCLUDEDIR = /usr/local/include
 
 # ========================================================================================
 # Compile flags
-CPPFLAGS = -g
+CPPFLAGS = 
 CC=gcc
 
 # ========================================================================================
 # TARGET/Source definitions
 SRCDIR = .
-TARGET = tpool_server
+TARGET = client
 OBJS = $(TARGET).o
-FILES= mango_server.c\
-       mango_connect.c\
-       mango_socket.c\
-       mango_log.c\
-
-
-
-
-SRC = $(wildcard $(SRCDIR)/$(FILES))
+SRC = $(wildcard $(SRCDIR)/*.c)
 
 # ========================================================================================
 # Make all option.
@@ -29,7 +25,7 @@ LDLIBS =
 LIBS = -l pthread
 
 all: $(TARGET)
-$(TARGET): $(SRC)
+$(TARGET): $(SRC:.cpp=.o)
 		$(CC) $(CPPFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS) $(LIBS)
 
 # ========================================================================================

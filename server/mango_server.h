@@ -4,7 +4,6 @@
 	> Mail: 
 	> Created Time: 2017年07月07日 星期五 12时14分54秒
  ************************************************************************/
-
 #ifndef _MANGO_SERVER_H
 #define _MANGO_SERVER_H
 
@@ -14,9 +13,10 @@
 #define BACKLOG 5
 #define CLIENTNUM 1024
 
-#define EPOLLEVENTS 20;
-#define FDSIZE 1000;
-#define MAXSIZE 1024;
+#define EPOLLEVENTS 20
+#define FDSIZE 1000
+#define MAXSIZE 1024
+#define READ_DATA_MODEL 2
 
 int connect_host[CLIENTNUM];
 int connect_number = 0;

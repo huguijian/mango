@@ -6,6 +6,7 @@
  ************************************************************************/
 #ifndef _MANGO_CONNECT_H
 #define _MANGO_CONNECT_H
+
 #define MAX_FDS 1024
 #define MAX_CONNECT_NUM MAX_FDS
 #define IP_ADDR_LENGTH 20
@@ -19,7 +20,6 @@ typedef struct _pool_connect{
 }pool_connect;
 
 static pool_connect pool_connect_client[MAX_CONNECT_NUM];
-
 int get_connect_count();
 int connect_total(BOOL is_true,int value);
 void init_pool_connect(void);

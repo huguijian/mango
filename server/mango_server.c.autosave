@@ -362,7 +362,7 @@ int main(int argc,char *argv[])
         }
     }
 
-    sleep(5);
+    
     //close(s_s);
     return 0;
     
