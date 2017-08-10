@@ -302,7 +302,7 @@ int main(int argc,char *argv[])
                     break;
                 case 2:
                     memset(data_buf,0,sizeof(data_buf));
-                    readBytes = socket_recv_by_eof(connected_fd,&data_buf,MAXSIZE);
+                    readBytes = socket_recv_by_eof(connected_fd,&data_buf,1);
 
                     break;
                 default:
@@ -362,7 +362,7 @@ int main(int argc,char *argv[])
         }
     }
 
-    sleep(5);
+    
     //close(s_s);
     return 0;
     

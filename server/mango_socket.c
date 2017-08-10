@@ -6,10 +6,9 @@
  ************************************************************************/
 #include "mango_global.h"
 #include "mango_socket.h"
-
 ssize_t socket_send(int fd, void *buf, size_t count)
 {
-        int left = count ;
+        int left = count;
         char * ptr = (char *)buf;
         while(left >0)
         {
