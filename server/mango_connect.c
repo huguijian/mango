@@ -1,5 +1,6 @@
 #include "mango_global.h"
 #include "mango_connect.h"
+#include "mango_log.h"
 static int current_connected_total = 0;
 static pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;//静态锁与动态锁多次被定义问题
 int get_connect_count();
