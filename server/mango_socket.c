@@ -56,7 +56,7 @@ ssize_t socket_recv(int fd,void *buf,size_t count)
     return left;
 }
 
-ssize_t socket_recv_peek(int fd,void *buf,size_t len)
+ssize_t socket_recv_peek(int fd,char *buf,size_t len)
 {
     while(1)
     {
@@ -78,6 +78,7 @@ ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)
     while(1)
     {
         ret = socket_recv_peek(fd,pbuf,left);
+
         if(ret<=0)
         {
             return ret;
@@ -98,10 +99,7 @@ ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)
         }
 
         ret = socket_recv(fd,pbuf,nRead);
-        if(ret != nRead)
-            exit(EXIT_FAILURE);
         pbuf += nRead;
-        left -= nRead;
         count +=nRead;
     }
 

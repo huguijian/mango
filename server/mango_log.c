@@ -30,7 +30,7 @@ static int log_create_current_time_stamp(void)
     cur_time = time(NULL);
     time_stamp = localtime(&cur_time);
 
-    snprintf(cur_ts_str,TIME_STAMP_BUF_LEN,"%02d/%02d/%02d %02d:%02d:%02d",time_stamp->tm_mday,time_stamp->tm_mon+1,time_stamp->tm_year % 100,time_stamp->tm_hour,time_stamp->tm_min,time_stamp->sec);
+    snprintf(cur_ts_str,TIME_STAMP_BUF_LEN,"%02d/%02d/%02d %02d:%02d:%02d",time_stamp->tm_mday,time_stamp->tm_mon+1,time_stamp->tm_year % 100,time_stamp->tm_hour,time_stamp->tm_min,time_stamp->tm_sec);
     return 0;
 }
 
@@ -40,7 +40,7 @@ int log_init()
     log_file_handle = fopen(log_file_name,"w");
     if(log_file_handle==NULL)
     {
-       printf("[%s %s %s] Can't create log file.\n",__FILE__,__FUNCTION__,__LINE__);
+       printf("[%s %s %d] Can't create log file.\n",__FILE__,__FUNCTION__,__LINE__);
        return -1;
 
     }
@@ -60,8 +60,8 @@ int log_printf(int level,const char *str)
     if(strcmp(str, last_log_str)) {
         switch(level)
         {
-            case LOG_LEVE_INFO:
-                neeed_log_str = 1;
+            case LOG_LEVEL_INFO:
+                need_log_str = 1;
                 snprintf(log_str,LOG_STR_BUF_LEN,"[INFO: %s] %s",cur_ts_str,str);
                 break;
 
@@ -102,7 +102,7 @@ int log_close(void)
 {
     if(log_file_handle != NULL)
     {
-        log_printf(LOG_LEVEL_INDISPENSABLE,"LOG END\N");
+        log_printf(LOG_LEVEL_INDISPENSABLE,"LOG END\n");
         fclose(log_file_handle);
     }
     return 0;

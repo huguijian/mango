@@ -2,6 +2,7 @@
 #include "mango_connect.h"
 #include "mango_server.h"
 #include "mango_socket.h"
+#include "mango_log.h"
 
 void *thread_handle(tpool_thread_paramter *arg)
 {
@@ -62,6 +63,7 @@ static void *tpool_task_function(task_func_paramter *arg)
 {
 
   printf("current connected fd=%d\n",arg->fd);
+  LOG_INFO(LOG_LEVEL_INFO,"current recv data :\n");
   printf("current recv data :%s\n",arg->recv_buffer);
   socket_send(arg->fd,arg->recv_buffer,strlen(arg->recv_buffer));
 
@@ -221,11 +223,13 @@ static void *accept_thread(void *arg)
         printf("Epoll event[%d] Current connected total num %d from ip:%s fd:%d.\n",connect_index,get_connect_count(),inet_ntoa(clientaddr.sin_addr),connect_fd);
 
     }
+
     if(listen_fd != -1){
         socket_close(listen_fd);
 
         listen_fd = -1;
     }
+
     return NULL;
 }
 
@@ -237,6 +241,9 @@ static int create_accept_task(void)
 
 int main(int argc,char *argv[])
 {
+    set_log_file_name("2017.txt");
+    log_init();
+
     int epoll_event_number = 0;
     int index = 0;
     int connected_fd = -1;
@@ -301,8 +308,9 @@ int main(int argc,char *argv[])
                     readBytes = socket_recv(connected_fd,&readPacket.data,dataBytes); //读取出后续的数据
                     break;
                 case 2:
+
                     memset(data_buf,0,sizeof(data_buf));
-                    readBytes = socket_recv_by_eof(connected_fd,&data_buf,1);
+                    readBytes = socket_recv_by_eof(connected_fd,&data_buf,1024);
 
                     break;
                 default:
@@ -330,7 +338,7 @@ int main(int argc,char *argv[])
                             break;
                     }
 
-
+                    printf("recv data is %s",task_func_paramter_t->recv_buffer);
                     tpool_add_task(tpool_t,tpool_task_function,task_func_paramter_t);
                 }else{
 

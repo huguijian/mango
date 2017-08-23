@@ -4,7 +4,7 @@
 	> Mail: 
 	> Created Time: 2017年07月07日 星期五 16时29分20秒
  ************************************************************************/
-
+#include "time.h"
 #ifndef _MANGO_LOG_H
 #define _MANGO_LOG_H
 
