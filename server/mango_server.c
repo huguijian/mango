@@ -63,7 +63,9 @@ static void *tpool_task_function(task_func_paramter *arg)
 {
 
   printf("current connected fd=%d\n",arg->fd);
-  LOG_INFO(LOG_LEVEL_INFO,"current recv data :\n");
+  char log_str_buf[LOG_STR_BUF_LEN];
+  snprintf(log_str_buf,LOG_STR_BUF_LEN,"current recv data :%s\n",arg->recv_buffer);
+  LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
   printf("current recv data :%s\n",arg->recv_buffer);
   socket_send(arg->fd,arg->recv_buffer,strlen(arg->recv_buffer));
 
@@ -241,7 +243,7 @@ static int create_accept_task(void)
 
 int main(int argc,char *argv[])
 {
-    set_log_file_name("2017.txt");
+    set_log_file_name("/data/mango_log/");
     log_init();
 
     int epoll_event_number = 0;

@@ -1,2 +1,0 @@
-[23/08/17 10:54:01] LOG START
-[INFO: 23/08/17 10:54:04] [mango_server.c tpool_task_function 66] current recv data :

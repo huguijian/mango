@@ -7,7 +7,16 @@
 #include "mango_global.h"
 #include "mango_log.h"
 
+
 #define TIME_STAMP_BUF_LEN 128
+
+#define mango_mkdir(log_file_path)\
+    do{\
+        char cmd[100];\
+        sprintf(cmd,"mkdir -p %s",log_file_path);\
+        system(cmd);\
+    }while(0);
+
 
 
 static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -17,9 +26,16 @@ static char log_file_name[128];
 static char cur_ts_str[TIME_STAMP_BUF_LEN];
 static char last_log_str[LOG_STR_BUF_LEN];
 
-void set_log_file_name(char *file_name)
+void set_log_file_name(char *log_path)
 {
-    sprintf(log_file_name,"%s",file_name);
+    //printf("%s\n",*log_path);
+    mango_mkdir(log_path);
+    struct tm *time_stamp;
+    time_t today;
+    today = time(NULL);
+    time_stamp = localtime(&today);
+    strftime(log_file_name,sizeof(log_file_name),"/data/mango_log/%Y%m%d.txt",time_stamp);
+
 }
 
 static int log_create_current_time_stamp(void)
@@ -37,9 +53,12 @@ static int log_create_current_time_stamp(void)
 int log_init()
 {
 
+
+
     log_file_handle = fopen(log_file_name,"w");
     if(log_file_handle==NULL)
     {
+
        printf("[%s %s %d] Can't create log file.\n",__FILE__,__FUNCTION__,__LINE__);
        return -1;
 
