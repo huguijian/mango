@@ -23,7 +23,7 @@
     log_printf(a,log_str);\
 }
 
-void set_log_file_name(char *log_path);
+void set_log_file_path(char *log_path);
 int log_init();
 int log_printf(int level,const char *str);
 int log_close(void);

@@ -6,6 +6,7 @@ static pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;//静态�
 int get_connect_count();
 static void lock_event_state(int iConnect,int iLock)
 {
+    char log_str_buf[LOG_STR_BUF_LEN];
     int iRet;
     if(iLock){
         iRet = pthread_mutex_lock(&pool_connect_client[iConnect].mutex);
@@ -14,12 +15,14 @@ static void lock_event_state(int iConnect,int iLock)
     }
 
     if(iRet!=0){
-        printf("iConnect[%d] mutex lock[%d]\n",iConnect,iLock);
+        snprintf(log_str_buf,LOG_STR_BUF_LEN,"iConnect[%d] mutex lock[%d]\n",iConnect,iLock);
+        LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
     }
 }
 
 void init_pool_connect()
 {
+    char log_str_buf[LOG_STR_BUF_LEN];
     int iIndex;
     int iRet;
     memset((char*)pool_connect_client,0,sizeof(pool_connect_client));
@@ -29,7 +32,7 @@ void init_pool_connect()
         pool_connect_client[iIndex].socket_status = 0;
         iRet = pthread_mutex_init(&pool_connect_client[iIndex].mutex,NULL);
         if(iRet != 0){
-            printf("pthread_mutex_init error.\n");
+            LOG_INFO(LOG_LEVEL_ERROR,"Pthread_mutex_init error.\n");
         }
     }
 }

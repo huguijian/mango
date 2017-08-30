@@ -6,6 +6,7 @@
  ************************************************************************/
 #include "mango_global.h"
 #include "mango_socket.h"
+#include "mango_log.h"
 ssize_t socket_send(int fd, void *buf, size_t count)
 {
         int left = count;
@@ -69,6 +70,7 @@ ssize_t socket_recv_peek(int fd,char *buf,size_t len)
 
 ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)
 {
+    char log_str_buf[LOG_STR_BUF_LEN];
     int ret;
     int nRead = 0;
     int left = max_size;
@@ -92,8 +94,11 @@ ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)
 
                 ret = socket_recv(fd,pbuf,i+1);
 
-                if(ret != 0)
-                    printf("Recv data len error .data len is:%d\n",ret);
+                if(ret != 0){
+                    snprintf(log_str_buf,LOG_STR_BUF_LEN,"Recv data len error .data len is:%d\n",ret);
+                    LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
+                }
+
                 return ret;
             }
         }
@@ -115,14 +120,18 @@ void socket_close(int fd)
 int socket_set_non_block(int fd)
 {
     int opts = -1;
+    char log_str_buf[LOG_STR_BUF_LEN];
     opts = fcntl(fd,F_GETFL);
     if(opts < 0){
-        printf("fcntl(fd=%d,GETFL) error.\n",fd);
+
+        snprintf(log_str_buf,LOG_STR_BUF_LEN,"Socket set fcntl(fd=%d,F_GETFL) error.\n",fd);
+        LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
         return -1;
     }
     opts = opts | O_NONBLOCK;
     if(fcntl(fd,F_SETFL,opts)<0) {
-        printf("fcntl(fd=%d,GETFL).\n error",fd);
+        snprintf(log_str_buf,LOG_STR_BUF_LEN,"Socket set fcntl(fd=%d,F_SETFL).\n error",fd);
+        LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
         return -1;
     }
     return 0;

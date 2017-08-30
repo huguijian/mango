@@ -62,11 +62,11 @@ int tpool_add_task(tpool *tpool_t,void*(*task_func)(task_func_paramter *arg),tas
 static void *tpool_task_function(task_func_paramter *arg)
 {
 
-  printf("current connected fd=%d\n",arg->fd);
-  char log_str_buf[LOG_STR_BUF_LEN];
-  snprintf(log_str_buf,LOG_STR_BUF_LEN,"current recv data :%s\n",arg->recv_buffer);
-  LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
-  printf("current recv data :%s\n",arg->recv_buffer);
+  //printf("current connected fd=%d\n",arg->fd);
+  //char log_str_buf[LOG_STR_BUF_LEN];
+  //snprintf(log_str_buf,LOG_STR_BUF_LEN,"current recv data :%s\n",arg->recv_buffer);
+  //LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
+  //printf("current recv data :%s\n",arg->recv_buffer);
   socket_send(arg->fd,arg->recv_buffer,strlen(arg->recv_buffer));
 
   if(arg->fd != -1)
@@ -84,10 +84,11 @@ static void *tpool_task_function(task_func_paramter *arg)
 tpool *init_tpool(int tpool_num)
 {
     int i=0;
-
+    char log_str_buf[LOG_STR_BUF_LEN];
     tpool *tpool_t = NULL;
     if(tpool_num<=0) {
-        printf("thread pool num must gt 0");
+
+        LOG_INFO(LOG_LEVEL_WARNING,"Thread pool num must be greater than 0\n");
     }
 
     tpool_t = (tpool*)malloc(sizeof(tpool));
@@ -103,7 +104,7 @@ tpool *init_tpool(int tpool_num)
         tpool_thread_paramter_t->tpool_t = tpool_t;
         tpool_thread_paramter_t->thread_index = i;
         if(pthread_create(&(tpool_t->threads[i]),NULL,(void*)thread_handle,tpool_thread_paramter_t)!=0) {
-            printf("create thread fail!");
+            LOG_INFO(LOG_LEVEL_ERROR,"Create thread fail!\n");
         }
     }
 
@@ -118,37 +119,41 @@ static void *accept_thread(void *arg)
     int val = 1;
     int err = 0;
     int bufsize = 32*1024;
-
     int connect_index = 0;
+
+    char log_str_buf[LOG_STR_BUF_LEN];
+
     struct sockaddr_in serveraddr;
     struct sockaddr_in clientaddr;
-
     struct epoll_event ev;
-
     static int listen_fd = -1;
     listen_fd = socket(AF_INET,SOCK_STREAM,0);
 
     if(-1 == listen_fd) {
-        printf("create socket error\n");
+
+        LOG_INFO(LOG_LEVEL_ERROR,"Create socket error\n");
         return NULL;
     }
 
     err = setsockopt(listen_fd,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(val));
     if(err != 0) {
-        printf("setsocketopt SO_REUSEADDR error.\n");
+
+        LOG_INFO(LOG_LEVEL_ERROR,"Set socket options SO_REUSEADDR error.\n");
         return NULL;
     }
 
     err = setsockopt(listen_fd,SOL_SOCKET,SO_RCVBUF,(char*)(&bufsize),sizeof(int));
     if(err != 0) {
-        printf("setsocketopt SO_RCVBUF error.\n");
+
+        LOG_INFO(LOG_LEVEL_ERROR,"Set socket options SO_RCVBUF error.\n");
         return NULL;
     }
 
     val = 2;
     err = setsockopt(listen_fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, &val, sizeof(val));
     if(err != 0) {
-        printf("setsocketopt TCP_DEFER_ACCEPT error.\n");
+
+        LOG_INFO(LOG_LEVEL_ERROR,"Set socket options TCP_DEFER_ACCEPT error.\n");
         return NULL;
     }
 
@@ -161,7 +166,9 @@ static void *accept_thread(void *arg)
 
     err = bind(listen_fd,(struct sockaddr *)&serveraddr,sizeof(serveraddr));
     if(err == -1) {
-        printf("socket bind error.\n");
+
+        LOG_INFO(LOG_LEVEL_ERROR,"Socket bind error.\n");
+        return NULL;
     }
 
     listen(listen_fd,BACKLOG);
@@ -169,14 +176,16 @@ static void *accept_thread(void *arg)
     while(1)
     {
         if((connect_fd = accept(listen_fd,(struct sockaddr*)&clientaddr,&len))<0){
-            printf("accept error.\n");
+            LOG_INFO(LOG_LEVEL_ERROR,"Accept error.\n");
         }
 
 
         connect_index = get_free_connect_index();
 
+
         if(connect_index==-1) {
-            printf("Not found free connect.\n");
+
+            LOG_INFO(LOG_LEVEL_ERROR,"Not found free connect.\n");
 
             if(connect_fd != -1) {
                 socket_close(connect_fd);
@@ -187,7 +196,9 @@ static void *accept_thread(void *arg)
         }
 
         if(socket_set_non_block(connect_fd)<0){
-            printf("set socket nonoblock socket=%d error.\n",connect_fd);
+            snprintf(log_str_buf,LOG_STR_BUF_LEN,"Set socket noblock error by socket connect fd=%d\n",connect_fd);
+            LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
+
             if(connect_fd != -1){
                 socket_close(connect_fd);
                 connect_fd = -1;
@@ -198,7 +209,8 @@ static void *accept_thread(void *arg)
         err = setsockopt(connect_fd,SOL_SOCKET,SO_RCVBUF,(char *)(&bufsize),sizeof(int));
         if(err != 0)
         {
-            printf("set socket(%d) setsockopt SO_RCVBUF error.\n",connect_fd);
+            snprintf(log_str_buf,LOG_STR_BUF_LEN,"Set socket options SO_RCVBUF error by socket connect fd=%d\n",connect_fd);
+            LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
             if(connect_fd != -1){
                 socket_close(connect_fd);
                 connect_fd = -1;
@@ -211,19 +223,18 @@ static void *accept_thread(void *arg)
         ev.data.fd = connect_fd;
         ev.events  = EPOLLIN | EPOLLET;
         if(epoll_ctl(epoll_fd,EPOLL_CTL_ADD,connect_fd,&ev) == -1){
-            printf("EPOLL_CTL_ADD error.\n");
+            LOG_INFO(LOG_LEVEL_ERROR,"Epoll EPOLL_CTL_ADD error.\n");
+
             if(connect_fd != -1){
                 socket_close(connect_fd);
                 connect_fd = -1;
             }
-        }else{
-            printf("epoll ctl add success.\n");
         }
 
         connect_total(TRUE,1);
 
-        printf("Epoll event[%d] Current connected total num %d from ip:%s fd:%d.\n",connect_index,get_connect_count(),inet_ntoa(clientaddr.sin_addr),connect_fd);
-
+        snprintf(log_str_buf,LOG_STR_BUF_LEN,"Epoll event[%d] Current connected total num %d from ip:%s fd:%d.\n",connect_index,get_connect_count(),inet_ntoa(clientaddr.sin_addr),connect_fd);
+        LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
     }
 
     if(listen_fd != -1){
@@ -243,9 +254,9 @@ static int create_accept_task(void)
 
 int main(int argc,char *argv[])
 {
-    set_log_file_name("/data/mango_log/");
+    set_log_file_path("/data/mango_log/");
     log_init();
-
+    char log_str_buf[LOG_STR_BUF_LEN];
     int epoll_event_number = 0;
     int index = 0;
     int connected_fd = -1;
@@ -268,7 +279,8 @@ int main(int argc,char *argv[])
 
             if(epoll_ctl(epoll_fd,EPOLL_CTL_DEL,events[index].data.fd,&ev) == -1)
             {
-                printf("epoll ctl del error\n");
+
+                LOG_INFO(LOG_LEVEL_ERROR,"Epoll ctl delete error.\n");
                 events[index].data.fd = -1;
             }
 
@@ -278,7 +290,8 @@ int main(int argc,char *argv[])
                 int connect_index = -1;
                 if(connected_fd < 0){
                     connect_total(FALSE,1);
-                    printf("Event[%d] read invalid handle.\n",index);
+                    snprintf(log_str_buf,LOG_STR_BUF_LEN,"Event[%d] read invalid handle.\n",index);
+                    LOG_INFO(LOG_LEVEL_WARNING,log_str_buf);
                     continue;
                 }
 
@@ -340,7 +353,7 @@ int main(int argc,char *argv[])
                             break;
                     }
 
-                    printf("recv data is %s",task_func_paramter_t->recv_buffer);
+
                     tpool_add_task(tpool_t,tpool_task_function,task_func_paramter_t);
                 }else{
 
@@ -351,15 +364,17 @@ int main(int argc,char *argv[])
                         socket_close(connected_fd);
                         connected_fd = -1;
                     }
+
                 }
 
 
             }else{
-                printf("Unkown error! event.data.fd = %d.\n",events[index].data.fd);
+
                 connect_total(FALSE,1);
                 if(connected_fd<0)
                 {
-                    printf("connected fd error!.\n");
+                    snprintf(log_str_buf,LOG_STR_BUF_LEN,"Connect fd error for connect_fd is %d",connected_fd);
+                    LOG_INFO(LOG_LEVEL_ERROR,log_str_buf);
                     continue;
                 }
 
@@ -368,6 +383,7 @@ int main(int argc,char *argv[])
                     socket_close(connected_fd);
                     connected_fd = -1;
                 }
+
             }
         }
     }

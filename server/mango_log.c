@@ -26,7 +26,7 @@ static char log_file_name[128];
 static char cur_ts_str[TIME_STAMP_BUF_LEN];
 static char last_log_str[LOG_STR_BUF_LEN];
 
-void set_log_file_name(char *log_path)
+void set_log_file_path(char *log_path)
 {
 
     mango_mkdir(log_path);

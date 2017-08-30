@@ -104,7 +104,7 @@ int simulation_stb_connect_to_g_net(int port,int index)
 static void *accept_thread(void *arg)
 {
 	int loop_index , index;
-    for (loop_index = 0; loop_index < 10000; loop_index++)
+    for (loop_index = 0; loop_index < 1025; loop_index++)
 	{
 		// simulation connect 3 times
 		for(index = 0; index < TRY_CONNECT_TIMES; index++)
