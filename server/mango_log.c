@@ -13,7 +13,7 @@
 #define mango_mkdir(log_file_path)\
     do{\
         char cmd[100];\
-        sprintf(cmd,"mkdir -p %s",log_file_path);\
+        sprintf(cmd,"mkdir -m 777 -p %s",log_file_path);\
         system(cmd);\
     }while(0);
 
@@ -28,7 +28,7 @@ static char last_log_str[LOG_STR_BUF_LEN];
 
 void set_log_file_name(char *log_path)
 {
-    //printf("%s\n",*log_path);
+
     mango_mkdir(log_path);
     struct tm *time_stamp;
     time_t today;
@@ -72,6 +72,7 @@ int log_init()
 int log_printf(int level,const char *str)
 {
     char log_str[LOG_STR_BUF_LEN];
+    memset(log_str,0,sizeof(log_str));
     int need_log_str = 0;
     log_create_current_time_stamp();
     pthread_mutex_lock(&log_mutex);

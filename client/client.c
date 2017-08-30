@@ -52,14 +52,16 @@ typedef int BOOL;
 /**
  * return value:0: recv data error, 1: connect error, 2: success
  */
-int simulation_stb_connect_to_g_net(int port)
+int simulation_stb_connect_to_g_net(int port,int index)
 {
 	int return_value = 0;
 	int socket_fd, err, num, loc;
 	struct sockaddr_in server_addr;
 	int recv_len;
 	char recv_buffer[2048] = {0};
-	char send_buffer[1024] = "hello epoll server\n";
+    char send_buffer[1024] = {0};
+    memset(send_buffer,0,sizeof(send_buffer));
+    sprintf(send_buffer,"hello epoll server index:%d\n",index);
 
 	// create socket
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -72,8 +74,9 @@ int simulation_stb_connect_to_g_net(int port)
 	err = connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 	if(err == 0)
 	{
+
 		// send
-		num = write(socket_fd, (char *)send_buffer, strlen(send_buffer));
+        num = write(socket_fd, (char *)send_buffer, strlen(send_buffer));
 		if (num <= 0) {
 			printf("send error\n");
 			return -1;
@@ -101,12 +104,12 @@ int simulation_stb_connect_to_g_net(int port)
 static void *accept_thread(void *arg)
 {
 	int loop_index , index;
-    for (loop_index = 0; loop_index < 1; loop_index++)
+    for (loop_index = 0; loop_index < 10000; loop_index++)
 	{
 		// simulation connect 3 times
 		for(index = 0; index < TRY_CONNECT_TIMES; index++)
 		{
-			simulation_stb_connect_to_g_net(port);
+            simulation_stb_connect_to_g_net(port,loop_index);
 		}
 	}
 	return NULL;
