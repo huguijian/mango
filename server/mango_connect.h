@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: pool_connect.h
-	> Author: 
-	> Mail: 
-	> Created Time: 2017年07月07日 星期五 12时10分19秒
+    > File Name: tpool_server.h
+    > Author: huguijian
+    > Mail: 292438151@qq.com
+    > Created Time: 2017年07月07日 星期五 12时14分54秒
  ************************************************************************/
 #ifndef _MANGO_CONNECT_H
 #define _MANGO_CONNECT_H

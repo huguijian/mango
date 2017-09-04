@@ -1,18 +1,11 @@
 /*************************************************************************
-	> File Name: client.c
-	> Author: 
-	> Mail: 
-	> Created Time: 2017年07月11日 星期二 14时56分20秒
+    > File Name: tpool_server.h
+    > Author: huguijian
+    > Mail: 292438151@qq.com
  ************************************************************************/
 
 #include<stdio.h>
 
-/*
- * stb_client_test.c
- *
- *  Created on: 2015Äê3ÔÂ16ÈÕ
- *      Author: Administrator
- */
 #include <stdio.h>
 #include <strings.h>
 #include <unistd.h>
@@ -27,14 +20,8 @@
 #include <time.h>
 #include "client.h"
 
-// socket info
-#define G_NET_UPDATE_SERVER_ADDR					"127.0.0.1"
 
-#define MAX_SN_LEN									8
-#define TRY_CONNECT_TIMES							1
-
-#define PORT_NUMBER									1
-
+#define SERVER_ADDR_HOST					"127.0.0.1"
 static int port  = 8891;
 
 static pthread_t accep_thread_t;
@@ -48,11 +35,7 @@ typedef int BOOL;
 #define	TRUE						(!FALSE)
 #endif
 
-
-/**
- * return value:0: recv data error, 1: connect error, 2: success
- */
-int simulation_stb_connect_to_g_net(int port,int index)
+int client_server_data_fun(int port,int index)
 {
 	int return_value = 0;
 	int socket_fd, err, num, loc;
@@ -63,13 +46,13 @@ int simulation_stb_connect_to_g_net(int port,int index)
     memset(send_buffer,0,sizeof(send_buffer));
     sprintf(send_buffer,"hello epoll server index:%d\n",index);
 
-	// create socket
+    //create socket
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	// set server data info
+
 	memset(&server_addr,0,sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
-	server_addr.sin_addr.s_addr = inet_addr(G_NET_UPDATE_SERVER_ADDR);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDR_HOST);
 	// connect
 	err = connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 	if(err == 0)
@@ -106,11 +89,9 @@ static void *accept_thread(void *arg)
 	int loop_index , index;
     for (loop_index = 0; loop_index < 1025; loop_index++)
 	{
-		// simulation connect 3 times
-		for(index = 0; index < TRY_CONNECT_TIMES; index++)
-		{
-            simulation_stb_connect_to_g_net(port,loop_index);
-		}
+
+        client_server_data_fun(port,loop_index);
+
 	}
 	return NULL;
 }
@@ -124,21 +105,7 @@ int main()
 {
 	int index = 0, temp;
 	int port_index = 0;
-
-
 	create_accept_task();
-
-	// simulation connect 3 times
-    /*
-	for(index = 0; index < TRY_CONNECT_TIMES; index++)
-	{
-		temp = simulation_stb_connect_to_g_net(port);
-	}
-    **/
-
-	while(1) {
-		
-	}
 
 	return 0;
 	

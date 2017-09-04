@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: mango_log.h
-	> Author: 
-	> Mail: 
-	> Created Time: 2017年07月07日 星期五 16时29分20秒
+    > File Name: tpool_server.h
+    > Author: huguijian
+    > Mail: 292438151@qq.com
+    > Created Time: 2017年07月07日 星期五 12时14分54秒
  ************************************************************************/
 #include "time.h"
 #ifndef _MANGO_LOG_H
