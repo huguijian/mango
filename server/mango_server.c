@@ -68,11 +68,11 @@ int tpool_add_task(tpool *tpool_t,void*(*task_func)(task_func_paramter *arg),tas
 static void *tpool_task_function(task_func_paramter *arg)
 {
 
-  //printf("current connected fd=%d\n",arg->fd);
+  printf("current connected fd=%d\n",arg->fd);
   //char log_str_buf[LOG_STR_BUF_LEN];
   //snprintf(log_str_buf,LOG_STR_BUF_LEN,"current recv data :%s\n",arg->recv_buffer);
   //LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
-  //printf("current recv data :%s\n",arg->recv_buffer);
+  printf("current recv data :%s\n",arg->recv_buffer);
   socket_send(arg->fd,arg->recv_buffer,strlen(arg->recv_buffer));
 
   if(arg->fd != -1)

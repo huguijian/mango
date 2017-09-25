@@ -5,7 +5,6 @@
  ************************************************************************/
 
 #include<stdio.h>
-
 #include <stdio.h>
 #include <strings.h>
 #include <unistd.h>
@@ -86,10 +85,11 @@ int client_server_data_fun(int port,int index)
 
 static void *accept_thread(void *arg)
 {
+
 	int loop_index , index;
     for (loop_index = 0; loop_index < 1025; loop_index++)
 	{
-
+        printf("loop index is:%d\n",loop_index);
         client_server_data_fun(port,loop_index);
 
 	}
@@ -106,8 +106,8 @@ int main()
 	int index = 0, temp;
 	int port_index = 0;
 	create_accept_task();
+    while(1){
 
-	return 0;
-	
+    }
 }
 
