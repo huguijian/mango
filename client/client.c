@@ -71,6 +71,11 @@ int client_server_data_fun(int port,int index)
 			printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
 			connect_total++;
 			return_value = 2;
+            sleep(10);
+            write(socket_fd, (char *)send_buffer, strlen(send_buffer));
+            printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
+            connect_total++;
+            return_value = 2;
 		}
 		printf("out\n");
 	}
@@ -87,7 +92,7 @@ static void *accept_thread(void *arg)
 {
 
 	int loop_index , index;
-    for (loop_index = 0; loop_index < 1025; loop_index++)
+    for (loop_index = 0; loop_index < 1; loop_index++)
 	{
         printf("loop index is:%d\n",loop_index);
         client_server_data_fun(port,loop_index);

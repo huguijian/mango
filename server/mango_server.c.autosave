@@ -78,7 +78,7 @@ static void *tpool_task_function(task_func_paramter *arg)
   if(arg->fd != -1)
   {
       int connect_index = get_connect_index_by_fd(arg->fd);
-      //set_free_connect_by_index(connect_index);
+      set_free_connect_by_index(connect_index);
       connect_total(FALSE,1);
       //socket_close(arg->fd);
 
