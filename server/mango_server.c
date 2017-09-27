@@ -77,9 +77,9 @@ static void *tpool_task_function(task_func_paramter *arg)
 
   if(arg->fd != -1)
   {
-      int connect_index = get_connect_index_by_fd(arg->fd);
+      //int connect_index = get_connect_index_by_fd(arg->fd);
       //set_free_connect_by_index(connect_index);
-      connect_total(FALSE,1);
+      //connect_total(FALSE,1);
       //socket_close(arg->fd);
 
   }
@@ -244,7 +244,7 @@ static void *accept_thread(void *arg)
     }
 
     if(listen_fd != -1){
-        socket_close(listen_fd);
+        //socket_close(listen_fd);
 
         listen_fd = -1;
     }
@@ -270,6 +270,7 @@ int main(int argc,char *argv[])
     struct dataPacket readPacket,writePacket;
     init_pool_connect();
     create_accept_task();
+    thread_heartbeat();
 
     epoll_fd = epoll_create(MAX_FDS);
     tpool *tpool_t = NULL;
@@ -302,6 +303,7 @@ int main(int argc,char *argv[])
                 }
 
                 connect_index = get_connect_index_by_fd(connected_fd);
+                update_connect_time(connect_index);
                 if(connect_index < 0)
                 {
                     connect_total(FALSE,1);
@@ -364,7 +366,7 @@ int main(int argc,char *argv[])
                 }else{
 
                     connect_total(FALSE,1);
-                    set_free_connect_by_index(connect_index);
+                    //set_free_connect_by_index(connect_index);
                     if(connected_fd != -1)
                     {
                         socket_close(connected_fd);
@@ -384,16 +386,15 @@ int main(int argc,char *argv[])
                     continue;
                 }
 
-                set_free_connect_by_index(get_connect_index_by_fd(connected_fd));
+                //set_free_connect_by_index(get_connect_index_by_fd(connected_fd));
                 if(connected_fd != -1){
-                    socket_close(connected_fd);
+                    //socket_close(connected_fd);
                     connected_fd = -1;
                 }
 
             }
         }
     }
-
     
     //close(s_s);
     return 0;

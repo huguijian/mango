@@ -71,7 +71,7 @@ int client_server_data_fun(int port,int index)
 			printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
 			connect_total++;
 			return_value = 2;
-            sleep(10);
+            sleep(5);
             write(socket_fd, (char *)send_buffer, strlen(send_buffer));
             printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
             connect_total++;

@@ -8,7 +8,7 @@
 #define _MANGO_CONNECT_H
 
 #define MAX_FDS 1024
-#define MAX_CONNECT_NUM MAX_FDS
+#define MAX_CONNECT_NUM 2
 #define IP_ADDR_LENGTH 20
 
 typedef struct _pool_connect{
@@ -28,4 +28,8 @@ pool_connect get_connect_info_by_index(int index);
 int get_free_connect_index(void);
 void set_free_connect_by_index(int index);
 int get_connect_index_by_fd(int connected_fd);
+int update_connect_time(int iConnect);
+static void *heartbeat_packet_check();
+int thread_heartbeat();
+
 #endif

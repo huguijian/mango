@@ -25,6 +25,10 @@
 #include <string.h>
 #include <netinet/tcp.h>
 
+#ifndef KEEP_ALIVE_TIME
+#define KEEP_ALIVE_TIME 15
+#endif
+
 typedef int BOOL;
 #ifndef FALSE
 #define	FALSE						(0)
