@@ -8,7 +8,7 @@
 #define _MANGO_CONNECT_H
 
 #define MAX_FDS 1024
-#define MAX_CONNECT_NUM 2
+#define MAX_CONNECT_NUM MAX_FDS
 #define IP_ADDR_LENGTH 20
 
 typedef struct _pool_connect{

@@ -7,6 +7,13 @@
 #include "mango_global.h"
 #include "mango_socket.h"
 #include "mango_log.h"
+#include "thirdparty/http-parser/http_parser.h"
+typedef struct {
+  int sock;
+  char* buffer;
+  int buf_len;
+ } http_data_info;
+
 ssize_t socket_send(int fd, void *buf, size_t count)
 {
         int left = count;
@@ -136,3 +143,47 @@ int socket_set_non_block(int fd)
     }
     return 0;
 }
+
+int my_url_callback(http_parser* parser, const char *at, size_t length) {
+  /* access to thread local custom_data_t struct.
+  Use this access save parsed data for later use into thread local
+  buffer, or communicate over socket
+  */
+  parser->data;
+  return '1';
+}
+
+void http_parser_thread(int sock) {
+
+ size_t len = 80*1024, nparsed;
+ char buf[len];
+ ssize_t recved;
+ /* allocate memory for user data */
+ http_data_info *my_data = malloc(sizeof(http_data_info));
+
+ /* some information for use by callbacks.
+ * achieves thread -> callback information flow */
+ my_data->sock = sock;
+
+ /* instantiate a thread-local parser */
+ http_parser *parser = malloc(sizeof(http_parser));
+ http_parser_init(parser, HTTP_REQUEST); /* initialise parser */
+ /* this custom data reference is accessible through the reference to the
+ parser supplied to callback functions */
+ parser->data = my_data;
+
+ http_parser_settings settings; /* set up callbacks */
+ settings.on_url = my_url_callback;
+
+ /* execute parser */
+ nparsed = http_parser_execute(parser, &settings, buf, recved);
+
+ /* parsed information copied from callback.
+ can now perform action on data copied into thread-local memory from callbacks.
+ achieves callback -> thread information flow */
+ my_data->buffer;
+ printf("comm on \n");
+ printf("http data is val:%s\n",my_data->buffer);
+
+}
+

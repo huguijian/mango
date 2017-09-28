@@ -8,6 +8,7 @@
 #include "mango_connect.h"
 #include "mango_server.h"
 #include "mango_socket.h"
+#include "thirdparty/http-parser/http_parser.h"
 #include "mango_log.h"
 
 void *thread_handle(tpool_thread_paramter *arg)
@@ -336,6 +337,9 @@ int main(int argc,char *argv[])
                     readBytes = socket_recv_by_eof(connected_fd,&data_buf,1024);
 
                     break;
+                case 3:
+                     http_parser_thread(connected_fd);
+                    break;
                 default:
                     break;
                 }
@@ -356,7 +360,9 @@ int main(int argc,char *argv[])
                         case 2:
                             task_func_paramter_t->recv_buffer = data_buf;
                             break;
-
+                        case 3:
+                            task_func_paramter_t->recv_buffer = "test";
+                            break;
                         default:
                             break;
                     }

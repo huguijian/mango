@@ -16,7 +16,7 @@
 #define EPOLLEVENTS 20
 #define FDSIZE 1000
 #define MAXSIZE 1024
-#define READ_DATA_MODEL 2
+#define READ_DATA_MODEL 3
 
 int connect_host[CLIENTNUM];
 int connect_number = 0;

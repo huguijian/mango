@@ -13,23 +13,20 @@ CC=gcc
 SRCDIR = .
 TARGET = tpool_server
 OBJS = $(TARGET).o
-FILES= mango_server.c\
+FILES= /thirdparty/http-parser/http_parser.c\
+       mango_server.c\
        mango_connect.c\
        mango_socket.c\
        mango_log.c\
 
-
-
-
 SRC = $(wildcard $(SRCDIR)/$(FILES))
-
 # ========================================================================================
 # Make all option.
 LDLIBS = 
 LIBS = -l pthread
 
 all: $(TARGET)
-$(TARGET): $(SRC)
+$(TARGET):$(SRC)
 		$(CC) $(CPPFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS) $(LIBS)
 
 # ========================================================================================
