@@ -1,7 +1,14 @@
+/*************************************************************************
+    > File Name: tpool_server.h
+    > Author: huguijian
+    > Mail: 292438151@qq.com
+    > Created Time: 2017年07月07日 星期五 12时14分54秒
+ ************************************************************************/
 #include "mango_global.h"
 #include "mango_connect.h"
 #include "mango_server.h"
 #include "mango_socket.h"
+#include "thirdparty/http-parser/http_parser.h"
 #include "mango_log.h"
 
 void *thread_handle(tpool_thread_paramter *arg)
@@ -62,19 +69,19 @@ int tpool_add_task(tpool *tpool_t,void*(*task_func)(task_func_paramter *arg),tas
 static void *tpool_task_function(task_func_paramter *arg)
 {
 
-  //printf("current connected fd=%d\n",arg->fd);
+  printf("current connected fd=%d\n",arg->fd);
   //char log_str_buf[LOG_STR_BUF_LEN];
   //snprintf(log_str_buf,LOG_STR_BUF_LEN,"current recv data :%s\n",arg->recv_buffer);
   //LOG_INFO(LOG_LEVEL_INFO,log_str_buf);
-  //printf("current recv data :%s\n",arg->recv_buffer);
+  printf("current recv data :%s\n",arg->recv_buffer);
   socket_send(arg->fd,arg->recv_buffer,strlen(arg->recv_buffer));
 
   if(arg->fd != -1)
   {
-      int connect_index = get_connect_index_by_fd(arg->fd);
-      set_free_connect_by_index(connect_index);
-      connect_total(FALSE,1);
-      socket_close(arg->fd);
+      //int connect_index = get_connect_index_by_fd(arg->fd);
+      //set_free_connect_by_index(connect_index);
+      //connect_total(FALSE,1);
+      //socket_close(arg->fd);
 
   }
 
@@ -238,7 +245,7 @@ static void *accept_thread(void *arg)
     }
 
     if(listen_fd != -1){
-        socket_close(listen_fd);
+        //socket_close(listen_fd);
 
         listen_fd = -1;
     }
@@ -264,6 +271,7 @@ int main(int argc,char *argv[])
     struct dataPacket readPacket,writePacket;
     init_pool_connect();
     create_accept_task();
+    thread_heartbeat();
 
     epoll_fd = epoll_create(MAX_FDS);
     tpool *tpool_t = NULL;
@@ -276,14 +284,14 @@ int main(int argc,char *argv[])
         epoll_event_number = epoll_wait(epoll_fd,events,MAX_FDS,2000);
 
         for(index=0;index<epoll_event_number;index++) {
-
+            /*
             if(epoll_ctl(epoll_fd,EPOLL_CTL_DEL,events[index].data.fd,&ev) == -1)
             {
 
                 LOG_INFO(LOG_LEVEL_ERROR,"Epoll ctl delete error.\n");
                 events[index].data.fd = -1;
             }
-
+            **/
             connected_fd = events[index].data.fd;
             if(events[index].events & EPOLLIN){
 
@@ -296,6 +304,7 @@ int main(int argc,char *argv[])
                 }
 
                 connect_index = get_connect_index_by_fd(connected_fd);
+                update_connect_time(connect_index);
                 if(connect_index < 0)
                 {
                     connect_total(FALSE,1);
@@ -328,6 +337,9 @@ int main(int argc,char *argv[])
                     readBytes = socket_recv_by_eof(connected_fd,&data_buf,1024);
 
                     break;
+                case 3:
+                     http_parser_thread(connected_fd);
+                    break;
                 default:
                     break;
                 }
@@ -348,7 +360,9 @@ int main(int argc,char *argv[])
                         case 2:
                             task_func_paramter_t->recv_buffer = data_buf;
                             break;
-
+                        case 3:
+                            task_func_paramter_t->recv_buffer = "test";
+                            break;
                         default:
                             break;
                     }
@@ -358,7 +372,7 @@ int main(int argc,char *argv[])
                 }else{
 
                     connect_total(FALSE,1);
-                    set_free_connect_by_index(connect_index);
+                    //set_free_connect_by_index(connect_index);
                     if(connected_fd != -1)
                     {
                         socket_close(connected_fd);
@@ -378,16 +392,15 @@ int main(int argc,char *argv[])
                     continue;
                 }
 
-                set_free_connect_by_index(get_connect_index_by_fd(connected_fd));
+                //set_free_connect_by_index(get_connect_index_by_fd(connected_fd));
                 if(connected_fd != -1){
-                    socket_close(connected_fd);
+                    //socket_close(connected_fd);
                     connected_fd = -1;
                 }
 
             }
         }
     }
-
     
     //close(s_s);
     return 0;

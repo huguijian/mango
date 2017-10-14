@@ -1,6 +1,13 @@
+/*************************************************************************
+    > File Name: tpool_server.h
+    > Author: huguijian
+    > Mail: 292438151@qq.com
+    > Created Time: 2017年07月07日 星期五 12时14分54秒
+ ************************************************************************/
 #include "mango_global.h"
 #include "mango_connect.h"
 #include "mango_log.h"
+#include "mango_socket.h"
 static int current_connected_total = 0;
 static pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;//静态锁与动态锁多次被定义问题
 int get_connect_count();
@@ -107,6 +114,64 @@ int connect_total(BOOL is_true,int value)
         current_connected_total = current_connected_total-value;
     }
     pthread_mutex_unlock(&connect_total_mutex);
+}
+
+int update_connect_time(int iConnect)
+{
+    time_t now;
+    time(&now);
+
+    lock_event_state(iConnect,1);
+    pool_connect_client[iConnect].now = now;
+    lock_event_state(iConnect,0);
+    return 0;
+}
+
+static void *heartbeat_packet_check()
+{
+    int index = 0;
+    time_t keep_alive_time = KEEP_ALIVE_TIME;
+    time_t time_difference;
+    time_t curr_time;
+    while(1)
+    {
+
+        connect_go_check:for(index;index<MAX_CONNECT_NUM;index++){
+
+           time(&curr_time);
+
+           if(pool_connect_client[index].connect_fd!=-1)
+           {
+
+               time_difference = curr_time-(pool_connect_client[index].now);
+
+               if(time_difference>keep_alive_time)
+               {
+                   socket_close(pool_connect_client[index].connect_fd);
+                   set_free_connect_by_index(index);
+                   connect_total(FALSE,1);
+
+               }
+           }
+
+           if((index+1)==MAX_CONNECT_NUM){
+               sleep(1);
+               index = 0;
+               goto connect_go_check;
+           }
+
+        }
+
+
+
+    }
+}
+
+int thread_heartbeat()
+{
+    static pthread_t heartbeat_thread_t;
+
+    return pthread_create(&heartbeat_thread_t,NULL,heartbeat_packet_check,NULL);
 }
 
 

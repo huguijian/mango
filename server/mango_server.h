@@ -1,7 +1,7 @@
 /*************************************************************************
 	> File Name: tpool_server.h
-	> Author: 
-	> Mail: 
+    > Author: huguijian
+    > Mail: 292438151@qq.com
 	> Created Time: 2017年07月07日 星期五 12时14分54秒
  ************************************************************************/
 #ifndef _MANGO_SERVER_H
@@ -16,7 +16,7 @@
 #define EPOLLEVENTS 20
 #define FDSIZE 1000
 #define MAXSIZE 1024
-#define READ_DATA_MODEL 2
+#define READ_DATA_MODEL 3
 
 int connect_host[CLIENTNUM];
 int connect_number = 0;
