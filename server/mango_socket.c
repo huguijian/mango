@@ -149,7 +149,7 @@ int my_url_callback(http_parser* parser, const char *at, size_t length) {
   Use this access save parsed data for later use into thread local
   buffer, or communicate over socket
   */
-  parser->data;
+  printf("url is val : %s",parser->data);
   return '1';
 }
 
