@@ -318,6 +318,7 @@ int main(int argc,char *argv[])
                 }
 
                 //recv data
+                char request_buf[102400];
                 char data_buf[1024];
                 int msg_len = 0;
                 int readBytes = 0;
@@ -338,7 +339,10 @@ int main(int argc,char *argv[])
 
                     break;
                 case 3:
-                     http_parser_thread(connected_fd);
+                    //memset(request_buf,0,sizeof(request_buf));
+                    readBytes = socket_recv_all(connected_fd,request_buf,10);
+                    printf("request buf is :%s\n",request_buf);
+                    readBytes = 0;
                     break;
                 default:
                     break;
@@ -361,7 +365,10 @@ int main(int argc,char *argv[])
                             task_func_paramter_t->recv_buffer = data_buf;
                             break;
                         case 3:
-                            task_func_paramter_t->recv_buffer = "test";
+
+                             http_parser_thread(connected_fd,request_buf);
+
+                             task_func_paramter_t->recv_buffer = "haha\n";
                             break;
                         default:
                             break;

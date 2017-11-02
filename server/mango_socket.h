@@ -12,7 +12,8 @@
 ssize_t socket_send(int fd, void *buf, size_t count);
 ssize_t socket_recv(int fd,void *buf,size_t count);
 ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size);
+ssize_t socket_recv_all(int fd,void *buf,size_t count);
 void socket_close(int fd);
 int socket_set_non_block(int fd);
-void http_parser_thread(int sock);
+void http_parser_thread(int sock,char *buf);
 #endif

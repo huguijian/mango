@@ -10,7 +10,7 @@
 #include "thirdparty/http-parser/http_parser.h"
 typedef struct {
   int sock;
-  char* buffer;
+  char *buffer;
   int buf_len;
  } http_data_info;
 
@@ -62,6 +62,27 @@ ssize_t socket_recv(int fd,void *buf,size_t count)
     }
 
     return left;
+}
+
+ssize_t socket_recv_all(int fd,void *buf,size_t count)
+{
+    char *ptr = (char*)buf ;
+    int readBytes = 0;
+    do{
+        readBytes = recv(fd,ptr,count,0);
+        if(readBytes< 0)//read函数小于0有两种情况：1中断 2出错
+        {
+                if(errno == EINTR)//读被中断
+                {
+                        continue;
+                }
+
+                return -1;
+        }
+        ptr+=readBytes;
+    }while(readBytes>0);
+
+    return readBytes;
 }
 
 ssize_t socket_recv_peek(int fd,char *buf,size_t len)
@@ -144,46 +165,75 @@ int socket_set_non_block(int fd)
     return 0;
 }
 
-int my_url_callback(http_parser* parser, const char *at, size_t length) {
-  /* access to thread local custom_data_t struct.
-  Use this access save parsed data for later use into thread local
-  buffer, or communicate over socket
-  */
-  printf("url is val : %s",parser->data);
-  return '1';
+int on_message_begin(http_parser *parser)
+{
+    printf("\n***MESSAGE BEGIN***\n");
+    return 0;
 }
 
-void http_parser_thread(int sock) {
+int on_header_field(http_parser *parser,const char *at,size_t length)
+{
+    printf("Head field:%.*s\n",(int)length,at);
+    return 0;
+}
 
- size_t len = 80*1024, nparsed;
- char buf[len];
- ssize_t recved;
- /* allocate memory for user data */
- http_data_info *my_data = malloc(sizeof(http_data_info));
+int on_header_value(http_parser *parser,const char *at,size_t length)
+{
+    printf("Header value:%.*s\n",(int)length,at);
+    return 0;
+}
 
- /* some information for use by callbacks.
- * achieves thread -> callback information flow */
- my_data->sock = sock;
+int on_url(http_parser *parser, const char *at, size_t length)
+{
 
- /* instantiate a thread-local parser */
+  printf("Url: %.*s\n", (int)length, at);
+  return 0;
+}
+
+int on_status(http_parser *parser,const char *at,size_t length)
+{
+    printf("Status value:%.*s\n",(int)length,at);
+    return 0;
+}
+
+int on_body(http_parser *parser,const char *at,size_t length)
+{
+    printf("body value:%.*s\n",(int)length,at);
+    return 0;
+}
+
+int on_headers_complete(http_parser *parser)
+{
+    printf("\n***HEADERS COMPLETE***\n");
+    return 0;
+}
+
+int on_message_complete(http_parser *parser)
+{
+    printf("\n***MESSAGE COMPLETE***\n");
+    return 0;
+}
+
+//http parser callback function
+static http_parser_settings settings =
+{
+    .on_message_begin = on_message_begin,
+    .on_header_field = on_header_field,
+    .on_header_value = on_header_value,
+    .on_url = on_url,
+    .on_status = 0,
+    .on_body = on_body,
+    .on_headers_complete = on_headers_complete,
+    .on_message_complete = on_message_complete
+};
+
+void http_parser_thread(int sock,char *requestBuf) {
+
  http_parser *parser = malloc(sizeof(http_parser));
- http_parser_init(parser, HTTP_REQUEST); /* initialise parser */
- /* this custom data reference is accessible through the reference to the
- parser supplied to callback functions */
- parser->data = my_data;
+ http_parser_init(parser, HTTP_REQUEST);
 
- http_parser_settings settings; /* set up callbacks */
- settings.on_url = my_url_callback;
-
- /* execute parser */
- nparsed = http_parser_execute(parser, &settings, buf, recved);
-
- /* parsed information copied from callback.
- can now perform action on data copied into thread-local memory from callbacks.
- achieves callback -> thread information flow */
- my_data->buffer;
- printf("comm on \n");
- printf("http data is val:%s\n",my_data->buffer);
-
+    /* execute parser */
+    http_parser_execute(parser, &settings, requestBuf, strlen(requestBuf));
+    printf("comm on \n");
 }
 
