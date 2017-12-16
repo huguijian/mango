@@ -2,3 +2,5 @@ client
 server
 server/thirdparty/http-parser/contrib
 server/thirdparty/http-parser
+.
+server/thirdparty/http-parser/contrib
