@@ -14,6 +14,7 @@ int get_connect_count();
 static void lock_event_state(int iConnect,int iLock)
 {
     char log_str_buf[LOG_STR_BUF_LEN];
+    
     int iRet;
     if(iLock){
         iRet = pthread_mutex_lock(&pool_connect_client[iConnect].mutex);

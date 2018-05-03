@@ -1,0 +1,155 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BACKLOG	server/mango_server.h	13;"	d
+BOOL	client/client.c	/^typedef int BOOL;$/;"	t	file:
+BOOL	server/mango_global.h	/^typedef int BOOL;$/;"	t
+BUFFLEN	server/mango_server.h	11;"	d
+CC	client/Makefile	/^CC=gcc$/;"	m
+CC	server/Makefile	/^CC=gcc$/;"	m
+CLIENTNUM	server/mango_server.h	14;"	d
+CPPFLAGS	client/Makefile	/^CPPFLAGS = $/;"	m
+CPPFLAGS	server/Makefile	/^CPPFLAGS = -g$/;"	m
+DATA_EOF	server/mango_socket.h	11;"	d
+EPOLLEVENTS	server/mango_server.h	16;"	d
+FALSE	client/client.c	32;"	d	file:
+FALSE	server/mango_global.h	34;"	d
+FDSIZE	server/mango_server.h	17;"	d
+FILES	server/Makefile	/^FILES= \/thirdparty\/http-parser\/http_parser.c\\$/;"	m
+INCLUDEDIR	client/Makefile	/^INCLUDEDIR = \/usr\/local\/include$/;"	m
+INCLUDEDIR	server/Makefile	/^INCLUDEDIR = \/usr\/local\/include$/;"	m
+IP_ADDR_LENGTH	server/mango_connect.h	12;"	d
+KEEP_ALIVE_TIME	server/mango_global.h	29;"	d
+LDLIBS	client/Makefile	/^LDLIBS = $/;"	m
+LDLIBS	server/Makefile	/^LDLIBS = $/;"	m
+LIBS	client/Makefile	/^LIBS = -l pthread$/;"	m
+LIBS	server/Makefile	/^LIBS = -l pthread$/;"	m
+LOG_INFO	server/mango_log.h	19;"	d
+LOG_LEVEL_ERROR	server/mango_log.h	13;"	d
+LOG_LEVEL_FATAL	server/mango_log.h	14;"	d
+LOG_LEVEL_INDISPENSABLE	server/mango_log.h	15;"	d
+LOG_LEVEL_INFO	server/mango_log.h	11;"	d
+LOG_LEVEL_WARNING	server/mango_log.h	12;"	d
+LOG_STR_BUF_LEN	server/mango_log.h	17;"	d
+MAXSIZE	server/mango_server.h	18;"	d
+MAX_CONNECT_NUM	server/mango_connect.h	11;"	d
+MAX_FDS	server/mango_connect.h	10;"	d
+OBJS	client/Makefile	/^OBJS = $(TARGET).o$/;"	m
+OBJS	server/Makefile	/^OBJS = $(TARGET).o$/;"	m
+READ_DATA_MODEL	server/mango_server.h	19;"	d
+SERVER_ADDR_HOST	client/client.c	24;"	d	file:
+SERVER_PORT	server/mango_server.h	12;"	d
+SRC	client/Makefile	/^SRC = $(wildcard $(SRCDIR)\/*.c)$/;"	m
+SRC	server/Makefile	/^SRC = $(wildcard $(SRCDIR)\/$(FILES))$/;"	m
+SRCDIR	client/Makefile	/^SRCDIR = .$/;"	m
+SRCDIR	server/Makefile	/^SRCDIR = .$/;"	m
+TARGET	client/Makefile	/^TARGET = client$/;"	m
+TARGET	server/Makefile	/^TARGET = tpool_server$/;"	m
+TIME_STAMP_BUF_LEN	server/mango_log.c	11;"	d	file:
+TRUE	client/client.c	35;"	d	file:
+TRUE	server/mango_global.h	37;"	d
+_CLIENT_H	client/client.h	9;"	d
+_MANGO_CONNECT_H	server/mango_connect.h	8;"	d
+_MANGO_GLOBAL_H	server/mango_global.h	9;"	d
+_MANGO_LOG_H	server/mango_log.h	9;"	d
+_MANGO_SERVER_H	server/mango_server.h	8;"	d
+_MANGO_SOCKET_H	server/mango_socket.h	8;"	d
+_pool_connect	server/mango_connect.h	/^typedef struct _pool_connect{$/;"	s
+_task_func_paramter	server/mango_server.h	/^typedef struct _task_func_paramter{$/;"	s
+_task_queue	server/mango_server.h	/^typedef struct _task_queue{$/;"	s
+_tpool	server/mango_server.h	/^typedef struct _tpool{$/;"	s
+_tpool_thread_paramter	server/mango_server.h	/^typedef struct _tpool_thread_paramter{$/;"	s
+accep_thread_t	client/client.c	/^static pthread_t accep_thread_t;$/;"	v	file:
+accept_thread	client/client.c	/^static void *accept_thread(void *arg)$/;"	f	file:
+accept_thread	server/mango_server.c	/^static void *accept_thread(void *arg)$/;"	f	file:
+add_connect_to_pool_connect	server/mango_connect.c	/^void add_connect_to_pool_connect(int iConnect,int fd,char *clientIp)$/;"	f
+buf_len	server/mango_socket.c	/^  int buf_len;$/;"	m	struct:__anon1	file:
+buffer	server/mango_socket.c	/^  char *buffer;$/;"	m	struct:__anon1	file:
+client_ip_addr	server/mango_connect.h	/^    char client_ip_addr[IP_ADDR_LENGTH];$/;"	m	struct:_pool_connect
+client_server_data_fun	client/client.c	/^int client_server_data_fun(int port,int index)$/;"	f
+connect_fd	server/mango_connect.h	/^    int connect_fd;$/;"	m	struct:_pool_connect
+connect_host	server/mango_server.h	/^int connect_host[CLIENTNUM];$/;"	v
+connect_number	server/mango_server.h	/^int connect_number = 0;$/;"	v
+connect_total	client/client.c	/^static int connect_total = 0;$/;"	v	file:
+connect_total	server/mango_connect.c	/^int connect_total(BOOL is_true,int value)$/;"	f
+connect_total_mutex	server/mango_connect.c	/^static pthread_mutex_t connect_total_mutex = PTHREAD_MUTEX_INITIALIZER;\/\/静态锁与动态锁多次被定义问题$/;"	v	file:
+create_accept_task	client/client.c	/^static int create_accept_task(void)$/;"	f	file:
+create_accept_task	server/mango_server.c	/^static int create_accept_task(void)$/;"	f	file:
+cur_ts_str	server/mango_log.c	/^static char cur_ts_str[TIME_STAMP_BUF_LEN];$/;"	v	file:
+current_connected_total	server/mango_connect.c	/^static int current_connected_total = 0;$/;"	v	file:
+data	server/mango_server.h	/^    char data[1024];$/;"	m	struct:dataPacket
+dataPacket	server/mango_server.h	/^struct dataPacket{$/;"	s
+epoll_fd	server/mango_server.h	/^static int epoll_fd = -1;$/;"	v
+fd	server/mango_server.h	/^    int fd;$/;"	m	struct:_task_func_paramter
+first_task	server/mango_server.h	/^    task_queue *first_task;$/;"	m	struct:_tpool
+func_paramter	server/mango_server.h	/^    task_func_paramter *func_paramter;$/;"	m	struct:_task_queue
+get_connect_count	server/mango_connect.c	/^int get_connect_count()$/;"	f
+get_connect_index_by_fd	server/mango_connect.c	/^int get_connect_index_by_fd(int connected_fd)$/;"	f
+get_connect_info_by_index	server/mango_connect.c	/^pool_connect get_connect_info_by_index(int index)$/;"	f
+get_free_connect_index	server/mango_connect.c	/^int get_free_connect_index(void)$/;"	f
+heartbeat_packet_check	server/mango_connect.c	/^static void *heartbeat_packet_check()$/;"	f	file:
+http_data_info	server/mango_socket.c	/^ } http_data_info;$/;"	t	typeref:struct:__anon1	file:
+http_parser_thread	server/mango_socket.c	/^void http_parser_thread(int sock,char *requestBuf) {$/;"	f
+init_pool_connect	server/mango_connect.c	/^void init_pool_connect()$/;"	f
+init_tpool	server/mango_server.c	/^tpool *init_tpool(int tpool_num)$/;"	f
+last_log_str	server/mango_log.c	/^static char last_log_str[LOG_STR_BUF_LEN];$/;"	v	file:
+lock_event_state	server/mango_connect.c	/^static void lock_event_state(int iConnect,int iLock)$/;"	f	file:
+log_close	server/mango_log.c	/^int log_close(void)$/;"	f
+log_create_current_time_stamp	server/mango_log.c	/^static int log_create_current_time_stamp(void)$/;"	f	file:
+log_file_handle	server/mango_log.c	/^static FILE *log_file_handle = NULL;$/;"	v	file:
+log_file_name	server/mango_log.c	/^static char log_file_name[128];$/;"	v	file:
+log_init	server/mango_log.c	/^int log_init()$/;"	f
+log_mutex	server/mango_log.c	/^static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v	file:
+log_printf	server/mango_log.c	/^int log_printf(int level,const char *str)$/;"	f
+main	client/client.c	/^int main()$/;"	f
+main	server/mango_server.c	/^int main(int argc,char *argv[])$/;"	f
+mango_mkdir	server/mango_log.c	13;"	d	file:
+msgLen	server/mango_server.h	/^    unsigned int msgLen;$/;"	m	struct:dataPacket
+mutex	server/mango_connect.h	/^    pthread_mutex_t mutex;$/;"	m	struct:_pool_connect
+next	server/mango_server.h	/^    struct _task_queue *next;$/;"	m	struct:_task_queue	typeref:struct:_task_queue::_task_queue
+now	server/mango_connect.h	/^    time_t now;$/;"	m	struct:_pool_connect
+on_body	server/mango_socket.c	/^int on_body(http_parser *parser,const char *at,size_t length)$/;"	f
+on_header_field	server/mango_socket.c	/^int on_header_field(http_parser *parser,const char *at,size_t length)$/;"	f
+on_header_value	server/mango_socket.c	/^int on_header_value(http_parser *parser,const char *at,size_t length)$/;"	f
+on_headers_complete	server/mango_socket.c	/^int on_headers_complete(http_parser *parser)$/;"	f
+on_message_begin	server/mango_socket.c	/^int on_message_begin(http_parser *parser)$/;"	f
+on_message_complete	server/mango_socket.c	/^int on_message_complete(http_parser *parser)$/;"	f
+on_status	server/mango_socket.c	/^int on_status(http_parser *parser,const char *at,size_t length)$/;"	f
+on_url	server/mango_socket.c	/^int on_url(http_parser *parser, const char *at, size_t length)$/;"	f
+pool_connect	server/mango_connect.h	/^}pool_connect;$/;"	t	typeref:struct:_pool_connect
+pool_connect_client	server/mango_connect.h	/^static pool_connect pool_connect_client[MAX_CONNECT_NUM];$/;"	v
+port	client/client.c	/^static int port  = 8891;$/;"	v	file:
+prev	server/mango_server.h	/^    struct _task_queue *prev;$/;"	m	struct:_task_queue	typeref:struct:_task_queue::_task_queue
+queue_lock	server/mango_server.h	/^    pthread_mutex_t queue_lock;$/;"	m	struct:_tpool
+queue_ready	server/mango_server.h	/^    pthread_cond_t  queue_ready;$/;"	m	struct:_tpool
+recv_buffer	server/mango_server.h	/^    char *recv_buffer;$/;"	m	struct:_task_func_paramter
+set_free_connect_by_index	server/mango_connect.c	/^void set_free_connect_by_index(int index)$/;"	f
+set_log_file_path	server/mango_log.c	/^void set_log_file_path(char *log_path)$/;"	f
+settings	server/mango_socket.c	/^static http_parser_settings settings =$/;"	v	file:
+sock	server/mango_socket.c	/^  int sock;$/;"	m	struct:__anon1	file:
+socket_close	server/mango_socket.c	/^void socket_close(int fd)$/;"	f
+socket_recv	server/mango_socket.c	/^ssize_t socket_recv(int fd,void *buf,size_t count)$/;"	f
+socket_recv_all	server/mango_socket.c	/^ssize_t socket_recv_all(int fd,void *buf,size_t count)$/;"	f
+socket_recv_by_eof	server/mango_socket.c	/^ssize_t socket_recv_by_eof(int fd, void *buf,size_t max_size)$/;"	f
+socket_recv_peek	server/mango_socket.c	/^ssize_t socket_recv_peek(int fd,char *buf,size_t len)$/;"	f
+socket_send	server/mango_socket.c	/^ssize_t socket_send(int fd, void *buf, size_t count)$/;"	f
+socket_set_non_block	server/mango_socket.c	/^int socket_set_non_block(int fd)$/;"	f
+socket_status	server/mango_connect.h	/^    int socket_status;$/;"	m	struct:_pool_connect
+task_func	server/mango_server.h	/^    void *(*task_func)(task_func_paramter *arg);$/;"	m	struct:_task_queue
+task_func_paramter	server/mango_server.h	/^}task_func_paramter;$/;"	t	typeref:struct:_task_func_paramter
+task_queue	server/mango_server.h	/^}task_queue;$/;"	t	typeref:struct:_task_queue
+task_queue_num	server/mango_server.h	/^    int task_queue_num;$/;"	m	struct:_tpool
+thread_handle	server/mango_server.c	/^void *thread_handle(tpool_thread_paramter *arg)$/;"	f
+thread_heartbeat	server/mango_connect.c	/^int thread_heartbeat()$/;"	f
+thread_index	server/mango_server.h	/^    int   thread_index;$/;"	m	struct:_tpool_thread_paramter
+thread_num	server/mango_server.h	/^    int        thread_num;$/;"	m	struct:_tpool
+threads	server/mango_server.h	/^    pthread_t *threads;$/;"	m	struct:_tpool
+tpool	server/mango_server.h	/^}tpool;$/;"	t	typeref:struct:_tpool
+tpool_add_task	server/mango_server.c	/^int tpool_add_task(tpool *tpool_t,void*(*task_func)(task_func_paramter *arg),task_func_paramter *arg)$/;"	f
+tpool_t	server/mango_server.h	/^    tpool *tpool_t;$/;"	m	struct:_tpool_thread_paramter
+tpool_task_function	server/mango_server.c	/^static void *tpool_task_function(task_func_paramter *arg)$/;"	f	file:
+tpool_thread_paramter	server/mango_server.h	/^}tpool_thread_paramter;$/;"	t	typeref:struct:_tpool_thread_paramter
+update_connect_time	server/mango_connect.c	/^int update_connect_time(int iConnect)$/;"	f
