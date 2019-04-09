@@ -42,9 +42,9 @@ int client_server_data_fun(int port,int index)
 	struct sockaddr_in server_addr;
 	int recv_len;
 	char recv_buffer[2048] = {0};
-    char send_buffer[1024] = {0};
-    memset(send_buffer,0,sizeof(send_buffer));
-    sprintf(send_buffer,"hello epoll server index:%d\n",index);
+        char send_buffer[1024] = {0};
+        memset(send_buffer,0,sizeof(send_buffer));
+        sprintf(send_buffer,"hello epoll server index:%d\n",index);
 
     //create socket
 	socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -52,7 +52,7 @@ int client_server_data_fun(int port,int index)
 	memset(&server_addr,0,sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDR_HOST);
+        server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDR_HOST);
 	// connect
 	err = connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 	if(err == 0)
@@ -72,7 +72,7 @@ int client_server_data_fun(int port,int index)
 			printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
 			connect_total++;
 			return_value = 2;
-            sleep(5);
+            //sleep(5);
             write(socket_fd, (char *)send_buffer, strlen(send_buffer));
             printf("connect_total = %d\n, rcv buffer = %s\n", connect_total, recv_buffer);
             connect_total++;
@@ -93,7 +93,7 @@ static void *accept_thread(void *arg)
 {
 
 	int loop_index , index;
-    for (loop_index = 0; loop_index < 1; loop_index++)
+    for (loop_index = 0; loop_index < 100; loop_index++)
 	{
         printf("loop index is:%d\n",loop_index);
         client_server_data_fun(port,loop_index);
@@ -109,9 +109,9 @@ static int create_accept_task(void)
 
 int main()
 {
-	int index = 0, temp;
-	int port_index = 0;
-	create_accept_task();
+    int index = 0, temp;
+    int port_index = 0;
+    create_accept_task();
     while(1){
 
     }
